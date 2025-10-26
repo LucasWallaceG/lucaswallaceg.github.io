@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-W3QFHLTG');</script>
+  <!-- End Google Tag Manager -->
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>E‑book: Chat em Tempo Real com Django + Redis (com Código‑Fonte)</title>
+  <meta name="description" content="Aprenda a construir um chat em tempo real com Django, Channels e Redis. E‑book prático com código‑fonte completo, UI moderna e deploy com Docker." />
+  <meta property="og:title" content="E‑book: Chat em Tempo Real com Django + Redis" />
+  <meta property="og:description" content="Guia passo a passo + starter code para lançar seu chat em horas, não semanas. Inclui login, WebSocket, Redis e UI moderna com Tailwind." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://exemplo.com/ebook-django-channels" />
+  <meta name="theme-color" content="#4f46e5" />
+
+  <!-- Tailwind CSS (CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class' }</script>
+  <!-- Alpine.js for small interactivity -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <style>
+    .glass { backdrop-filter: blur(10px); background: rgba(255,255,255,.65); }
+    .dark .glass { background: rgba(17,17,20,.6); }
+    .code-shadow { box-shadow: 0 30px 80px rgba(79,70,229,.25); }
+  </style>
+</head>
+<body x-data="{dark: (localStorage.theme==='dark')}", x-init="$watch('dark', v=>localStorage.theme=v? 'dark':'light'); if(dark) document.documentElement.classList.add('dark');" class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+    <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W3QFHLTG"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+    
+  
+  <!-- Top Bar -->
+  <header class="sticky top-0 z-40 border-b border-slate-200/70 dark:border-slate-800/70 bg-white/70 dark:bg-slate-900/70 backdrop-blur">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="#home" class="flex items-center gap-3">
+        <div class="h-8 w-8 rounded-xl bg-indigo-600"></div>
+        <span class="font-semibold tracking-tight">Realtime Chat • Django</span>
+      </a>
+      <nav class="hidden md:flex items-center gap-6 text-sm">
+        <a href="#conteudo" class="hover:text-indigo-600">Conteúdo</a>
+        <a href="#para-quem" class="hover:text-indigo-600">Para quem é</a>
+        <a href="#bonus" class="hover:text-indigo-600">Bônus</a>
+        <a href="#faq" class="hover:text-indigo-600">FAQ</a>
+      </nav>
+      <div class="flex items-center gap-2">
+        <a href="https://pay.kiwify.com.br/C53qnOs" target="_blank" rel="noopener" class="hidden sm:inline-block rounded-xl bg-indigo-600 text-white text-sm px-4 py-2 hover:bg-indigo-700">Comprar agora</a>
+        <button @click="dark=!dark; document.documentElement.classList.toggle('dark')" class="h-9 w-9 grid place-items-center rounded-xl border border-slate-200 dark:border-slate-800">
+          <svg x-show="!dark" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364 6.364-1.414-1.414M7.05 7.05 5.636 5.636m12.728 0-1.414 1.414M7.05 16.95l-1.414 1.414"/></svg>
+          <svg x-show="dark" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M21.64 13a9 9 0 1 1-10.63-10.63 1 1 0 0 1 1.11 1.47A7 7 0 1 0 20.17 12.5a1 1 0 0 1 1.47 1.11Z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section id="home" class="relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-indigo-600 via-violet-600 to-fuchsia-600 opacity-10 dark:opacity-[.15]"></div>
+    <div class="max-w-6xl mx-auto px-4 py-16 md:py-20 grid md:grid-cols-2 gap-10 items-center">
+      <div>
+        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[12px] bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-200">
+          <span class="h-1.5 w-1.5 rounded-full bg-indigo-600"></span> Código‑fonte completo incluído
+        </span>
+        <h1 class="mt-4 text-4xl/tight md:text-5xl/tight font-black">
+          Construa um <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-fuchsia-600">chat em tempo real</span> com Django + Redis
+        </h1>
+        <p class="mt-4 text-slate-600 dark:text-slate-300 text-lg">
+          Um e‑book prático que entrega o caminho direto: login seguro, WebSocket com Channels, Redis funcionando e uma homepage de chat moderna — tudo pronto para personalizar.
+        </p>
+        <div class="mt-6 flex flex-wrap items-center gap-3">
+          <a href="https://pay.kiwify.com.br/C53qnOs" target="_blank" rel="noopener" class="rounded-2xl bg-indigo-600 text-white px-6 py-3 text-base font-semibold shadow-sm hover:bg-indigo-700">Comprar e baixar agora</a>
+          <!-- <a href="#preview" class="rounded-2xl border border-slate-300 dark:border-slate-700 px-6 py-3 text-base hover:bg-white/60 dark:hover:bg-slate-900/60">Ver prévia</a> -->
+        </div>
+        <div class="mt-6 flex items-center gap-4 text-sm text-slate-500">
+          <div class="flex items-center gap-2"><svg class="h-5 w-5 text-emerald-500" fill="currentColor" viewBox="0 0 24 24"><path d="M9 12.75 11.25 15 15 9.75"/><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75S6.615 21.75 12 21.75 21.75 17.385 21.75 12 17.385 2.25 12 2.25Zm0 17.25a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" clip-rule="evenodd"/></svg> Atualizado: Django 5 + Channels 4</div>
+          <div class="flex items-center gap-2"><svg class="h-5 w-5 text-emerald-500" fill="currentColor" viewBox="0 0 24 24"><path d="M9 12.75 11.25 15 15 9.75"/><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75S6.615 21.75 12 21.75 21.75 17.385 21.75 12 17.385 2.25 12 2.25Zm0 17.25a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" clip-rule="evenodd"/></svg> Docker + Redis prontos</div>
+          <div class="flex items-center gap-2"><svg class="h-5 w-5 text-emerald-500" fill="currentColor" viewBox="0 0 24 24"><path d="M9 12.75 11.25 15 15 9.75"/><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75S6.615 21.75 12 21.75 21.75 17.385 21.75 12 17.385 2.25 12 2.25Zm0 17.25a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" clip-rule="evenodd"/></svg> UI moderna com Tailwind</div>
+        </div>
+      </div>
+
+      <!-- Code preview card -->
+      <div id="preview" class="glass rounded-3xl border border-slate-200/70 dark:border-slate-800/70 p-5 md:p-6 code-shadow">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <div class="h-3 w-3 rounded-full bg-rose-400"></div>
+            <div class="h-3 w-3 rounded-full bg-amber-400"></div>
+            <div class="h-3 w-3 rounded-full bg-emerald-400"></div>
+          </div>
+          <span class="text-xs text-slate-500">consumers.py</span>
+        </div>
+        <pre class="text-sm overflow-auto leading-6"><code class="language-python">class ChatConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        if not self.scope['user'].is_authenticated:
+            await self.close(); return
+        self.room = 'global'
+        await self.channel_layer.group_add(self.room, self.channel_name)
+        await self.accept()
+
+    async def receive(self, text_data):
+        msg = json.loads(text_data).get('message','').strip()
+        if msg:
+            await self.channel_layer.group_send(self.room, {
+                'type': 'chat.message', 'message': msg,
+                'username': self.scope['user'].username
+            })
+
+    async def chat_message(self, event):
+        await self.send(json.dumps(event))</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- Conteúdo do E-book -->
+  <section id="conteudo" class="py-16 md:py-20">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="grid lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2">
+          <h2 class="text-3xl font-bold">O que você vai aprender</h2>
+          <p class="mt-3 text-slate-600 dark:text-slate-300">Um passo a passo direto ao ponto para sair do zero ao deploy com confiança.</p>
+          <div class="mt-8 grid md:grid-cols-2 gap-6">
+            <div class="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+              <h3 class="font-semibold">1) Arquitetura</h3>
+              <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">HTTP vs WebSocket, onde entra o Redis, Channels e ASGI.</p>
+            </div>
+            <div class="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+              <h3 class="font-semibold">2) Setup do projeto</h3>
+              <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Settings essenciais, routing do Channels e camadas.</p>
+            </div>
+            <div class="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+              <h3 class="font-semibold">3) Autenticação</h3>
+              <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Login/cadastro e proteção do WebSocket por sessão.</p>
+            </div>
+            <div class="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+              <h3 class="font-semibold">4) Frontend do chat</h3>
+              <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">UI com Tailwind, envio/recebimento e auto‑reconexão.</p>
+            </div>
+            <div class="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+              <h3 class="font-semibold">5) Redis + Docker</h3>
+              <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Suba Redis e Daphne com `docker compose up`.</p>
+            </div>
+            <div class="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+              <h3 class="font-semibold">6) Deploy</h3>
+              <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Nginx, estáticos e supervisão de processos.</p>
+            </div>
+          </div>
+        </div>
+        <aside class="lg:col-span-1">
+          <div class="rounded-2xl p-6 bg-gradient-to-br from-indigo-600 to-violet-600 text-white">
+            <h3 class="text-xl font-semibold">O que está incluído</h3>
+            <ul class="mt-4 space-y-3 text-sm/6">
+              <li class="flex gap-2"><span>✅</span> E‑book em PDF (15–20 págs.)</li>
+              <li class="flex gap-2"><span>✅</span> Projeto Starter (Django 5 + Channels 4)</li>
+              <li class="flex gap-2"><span>✅</span> UI Tailwind pronta</li>
+              <li class="flex gap-2"><span>✅</span> Docker Compose com Redis</li>
+              <li class="flex gap-2"><span>✅</span> Licença para uso em projetos</li>
+            </ul>
+          </div>
+          <div class="mt-6 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+            <h4 class="font-semibold">Pré‑requisitos</h4>
+            <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Conhecimentos básicos de Python/Django e ambiente de desenvolvimento.</p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- Para quem é -->
+  <section id="para-quem" class="py-16 md:py-20 bg-slate-100/60 dark:bg-slate-900/40">
+    <div class="max-w-6xl mx-auto px-4">
+      <h2 class="text-3xl font-bold">Para quem este e‑book é ideal</h2>
+      <div class="mt-8 grid md:grid-cols-3 gap-6">
+        <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+          <h3 class="font-semibold">Devs Python/Django</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Que precisam integrar tempo real com o mínimo de fricção.</p>
+        </div>
+        <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+          <h3 class="font-semibold">Times e freelancers</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Que querem acelerar POCs e MVPs com uma base sólida.</p>
+        </div>
+        <div class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+          <h3 class="font-semibold">Estudantes e entusiastas</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Que desejam entender como WS + Redis funcionam na prática.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bônus -->
+  <section id="bonus" class="py-16 md:py-20">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="rounded-3xl p-8 md:p-12 bg-gradient-to-br from-indigo-600 via-violet-600 to-fuchsia-600 text-white">
+        <div class="grid md:grid-cols-2 gap-8 items-center">
+          <div>
+            <h2 class="text-3xl font-bold">Bônus inclusos</h2>
+            <ul class="mt-6 space-y-3 text-white/90">
+              <li class="flex gap-3"><span>🎁</span> Template de deploy com Docker Compose</li>
+              <li class="flex gap-3"><span>🎁</span> Checklists de segurança (auth, rate limit, XSS)</li>
+              <li class="flex gap-3"><span>🎁</span> Variáveis de ambiente prontas para produção</li>
+            </ul>
+            <p class="mt-6 text-sm opacity-90">Idioma: Português • Acesso imediato após a compra • Atualizações futuras incluídas.</p>
+          </div>
+          <div class="glass rounded-2xl p-6 border border-white/20">
+            <h3 class="font-semibold">Exemplo de seção do livro</h3>
+            <pre class="mt-3 text-sm/6 overflow-auto"><code>CHANNEL_LAYERS = {
+  'default': {
+    'BACKEND': 'channels_redis.core.RedisChannelLayer',
+    'CONFIG': {'hosts': [('redis', 6379)]},
+  }
+}
+
+application = ProtocolTypeRouter({
+  'http': django_asgi_app,
+  'websocket': AuthMiddlewareStack(
+    URLRouter(chat.routing.websocket_urlpatterns)
+  ),
+})</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Depoimentos (placeholders) -->
+  <section class="py-16 md:py-20 bg-slate-100/60 dark:bg-slate-900/40">
+    <div class="max-w-6xl mx-auto px-4">
+      <h2 class="text-3xl font-bold">O que dizem os primeiros leitores</h2>
+      <div class="mt-8 grid md:grid-cols-3 gap-6">
+        <figure class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+          <blockquote class="text-sm text-slate-700 dark:text-slate-300">“Consegui colocar um chat funcional no meu MVP em uma tarde. O starter economizou dias.”</blockquote>
+          <figcaption class="mt-3 text-xs text-slate-500">— Dev Full‑stack</figcaption>
+        </figure>
+        <figure class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+          <blockquote class="text-sm text-slate-700 dark:text-slate-300">“Clareza no passo a passo. O capítulo de auth + WebSocket foi decisivo.”</blockquote>
+          <figcaption class="mt-3 text-xs text-slate-500">— Eng. Software</figcaption>
+        </figure>
+        <figure class="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+          <blockquote class="text-sm text-slate-700 dark:text-slate-300">“Valeu pelo Docker + Redis já pronto. Apenas rodei e testei.”</blockquote>
+          <figcaption class="mt-3 text-xs text-slate-500">— Estudante</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- Checkout / Oferta -->
+  <section id="checkout" class="py-16 md:py-20">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden grid md:grid-cols-2">
+        <div class="p-8">
+          <h3 class="text-2xl font-bold">E‑book + Código‑fonte completo</h3>
+          <p class="mt-3 text-slate-600 dark:text-slate-300">Acesso imediato ao PDF e ao repositório do projeto starter.</p>
+          <ul class="mt-6 space-y-3 text-sm">
+            <li class="flex gap-2">✅ Atualizações futuras incluídas</li>
+            <li class="flex gap-2">✅ Suporte por e‑mail para dúvidas iniciais</li>
+            <li class="flex gap-2">✅ Garantia incondicional de 7 dias</li>
+          </ul>
+          <p class="mt-6 text-xs text-slate-500">Resultados podem variar conforme seu ambiente e experiência. Produto educacional.</p>
+        </div>
+        <div class="p-8 bg-slate-50 dark:bg-slate-950/40 flex flex-col items-center justify-center text-center">
+          <div class="text-5xl font-black tracking-tight"><span class="align-top text-xl">R$</span><span data-price>4,99</span></div>
+          <p class="mt-2 text-sm text-slate-500">Preço do produto</p>
+          <a href="https://pay.kiwify.com.br/C53qnOs" target="_blank" rel="noopener" class="mt-6 inline-flex items-center justify-center rounded-2xl bg-indigo-600 text-white px-8 py-3 font-semibold hover:bg-indigo-700 w-full">Comprar agora</a>
+          <p class="mt-3 text-xs text-slate-500">Pagamento seguro • Acesso imediato</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="py-16 md:py-20 bg-slate-100/60 dark:bg-slate-900/40">
+    <div class="max-w-5xl mx-auto px-4">
+      <h2 class="text-3xl font-bold">Perguntas frequentes</h2>
+      <div class="mt-8 space-y-4" x-data="{open: null}">
+        <div class="rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+          <button @click="open=open===1?null:1" class="w-full text-left px-5 py-4 font-medium flex justify-between items-center">O código‑fonte está incluso? <span>+</span></button>
+          <div x-show="open===1" x-collapse class="px-5 pb-5 text-sm text-slate-600 dark:text-slate-300">Sim. Você recebe o projeto starter (Django 5 + Channels 4 + Redis + Tailwind + Docker Compose).</div>
+        </div>
+        <div class="rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+          <button @click="open=open===2?null:2" class="w-full text-left px-5 py-4 font-medium flex justify-between items-center">Vou conseguir usar com meu projeto atual? <span>+</span></button>
+          <div x-show="open===2" x-collapse class="px-5 pb-5 text-sm text-slate-600 dark:text-slate-300">Sim. O livro mostra como integrar auth e o consumidor WS sem quebrar sua estrutura.</div>
+        </div>
+        <div class="rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+          <button @click="open=open===3?null:3" class="w-full text-left px-5 py-4 font-medium flex justify-between items-center">Requisitos de conhecimento? <span>+</span></button>
+          <div x-show="open===3" x-collapse class="px-5 pb-5 text-sm text-slate-600 dark:text-slate-300">Conhecimentos básicos de Python/Django. O restante é explicado passo a passo.</div>
+        </div>
+        <div class="rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+          <button @click="open=open===4?null:4" class="w-full text-left px-5 py-4 font-medium flex justify-between items-center">Há garantia? <span>+</span></button>
+          <div x-show="open===4" x-collapse class="px-5 pb-5 text-sm text-slate-600 dark:text-slate-300">Sim. 7 dias para reembolso total caso não seja para você.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<!-- Autor / Rodapé -->
+  <section class="py-16 md:py-20">
+    <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-3 gap-8 items-center">
+      <div class="md:col-span-2">
+        <h2 class="text-3xl font-bold">Sobre o autor</h2>
+        <p class="mt-3 text-slate-600 dark:text-slate-300">Dev full‑stack apaixonado por produtividade e tempo real. Este material nasceu de projetos reais e foi refinado para você aplicar rápido.</p>
+      </div>
+      <div class="glass rounded-2xl p-6 border border-slate-200/70 dark:border-slate-800/70">
+        <p class="text-sm text-slate-600 dark:text-slate-300">Precisa emitir nota ou quer licenças em volume para equipes? <a class="text-indigo-600 hover:underline" href="mailto:contato@seusite.com">Fale comigo</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="border-t border-slate-200 dark:border-slate-800">
+    <div class="max-w-6xl mx-auto px-4 py-8 text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div>© <span id="ano"></span> Lewtech • Todos os direitos reservados</div>
+      <div class="flex items-center gap-4">
+        <a href="#" class="hover:text-slate-700 dark:hover:text-slate-300">Termos</a>
+        <a href="#" class="hover:text-slate-700 dark:hover:text-slate-300">Privacidade</a>
+        <a href="https://pay.hotmart.com/C101041414A" target="_blank" rel="noopener" class="hover:text-slate-700 dark:hover:text-slate-300">Comprar</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Sticky mobile CTA -->
+  <div class="fixed bottom-4 inset-x-4 sm:hidden">
+    <a href="https://pay.hotmart.com/C101041414A" target="_blank" rel="noopener" class="block text-center rounded-2xl bg-indigo-600 text-white py-3 font-semibold shadow-lg shadow-indigo-600/30">Comprar agora</a>
+  </div>
+
+  <script>
+    document.getElementById('ano').textContent = new Date().getFullYear();
+  </script>
+
+  <!-- JSON-LD (edite os campos conforme sua oferta real) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "E‑book: Chat em Tempo Real com Django + Redis",
+    "description": "Guia prático com código‑fonte para construir um chat em tempo real (Django, Channels, Redis, Tailwind, Docker).",
+    "brand": {"@type": "Brand", "name": "SeuNome.dev"},
+    "sku": "ebook-django-channels",
+    "offers": {
+      "@type": "Offer",
+      "priceCurrency": "BRL",
+      "price": "4,99",
+      "availability": "https://schema.org/InStock"
+    }
+  }
+  </script>
+
+  <!-- Google Ads / Tag de conversão (placeholder) -->
+  <!-- 
+  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-CONVERSION_ID"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);} gtag('js', new Date());
+    gtag('config', 'AW-CONVERSION_ID');
+  </script>
+  -->
+  
+  <!-- Botão flutuante de WhatsApp -->
+  <a href="https://wa.me/55081984626298?text=Ol%C3%A1%2C%20vim%20da%20landing%20do%20E-book%20Django%20+%20Redis" target="_blank" rel="noopener" aria-label="Falar no WhatsApp"
+     class="fixed bottom-20 right-4 z-40 inline-flex items-center gap-2 rounded-full px-4 py-3 shadow-lg bg-emerald-500 text-white hover:bg-emerald-600">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M20.52 3.48A11.94 11.94 0 0 0 12.06 0 12 12 0 0 0 0 12c0 2.12.55 4.2 1.6 6.03L0 24l6.12-1.58A11.97 11.97 0 0 0 12 24h.06A12 12 0 0 0 24 11.94 11.94 11.94 0 0 0 20.52 3.48ZM12.06 22.2h-.05a10.3 10.3 0 0 1-5.25-1.45l-.38-.22-3.64.94.97-3.55-.25-.37A10.2 10.2 0 0 1 1.8 12c0-5.6 4.6-10.2 10.26-10.2 2.74 0 5.33 1.07 7.27 3.02a10.1 10.1 0 0 1 2.98 7.23c0 5.67-4.62 10.16-10.25 10.16Zm5.82-7.4c-.32-.16-1.86-.9-2.14-1.01-.29-.1-.5-.16-.71.17-.21.32-.81 1-.99 1.2-.18.22-.37.24-.69.08-.32-.16-1.37-.5-2.6-1.6-.96-.86-1.6-1.93-1.8-2.25-.19-.32-.02-.5.14-.66.14-.14.32-.37.48-.55.16-.19.21-.32.32-.54.1-.22.05-.4-.02-.55-.07-.16-.71-1.7-.97-2.32-.26-.62-.52-.54-.71-.55h-.6c-.2 0-.54.08-.82.4-.28.32-1.08 1.06-1.08 2.6 0 1.54 1.11 3.03 1.27 3.24.16.22 2.18 3.34 5.28 4.69 3.1 1.35 3.1.9 3.66.85.56-.05 1.86-.76 2.12-1.49.26-.73.26-1.35.19-1.49-.06-.14-.29-.22-.61-.38Z"/></svg>
+    WhatsApp
+  </a>
+
+</body>
+</html>
