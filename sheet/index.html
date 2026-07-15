@@ -1,0 +1,1224 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Planilha Prática de Gestão Financeira para Pequenos Negócios</title>
+<meta name="description" content="Controle vendas, custos e despesas e veja o lucro real do seu negócio automaticamente. Roda no celular e no computador, direto no Google Sheets.">
+
+<style>
+/* ─────────────────────────────────────────────────────────────
+   Tokens
+   ───────────────────────────────────────────────────────────── */
+:root {
+  --paper:    #F4F6F2;
+  --paper-2:  #E9EDE5;
+  --card:     #FFFFFF;
+  --ink:      #121A15;
+  --ink-2:    #3B4A41;
+  --muted:    #6B7A70;
+  --rule:     #D2DACF;
+  --rule-2:   #B9C4BC;
+  --green:    #0B6E3E;
+  --green-hi: #095B33;
+  --clay:     #8A4A2C;
+  --wash:     rgba(11, 110, 62, .07);
+  --shadow:   0 1px 2px rgba(18, 26, 21, .05), 0 8px 24px -12px rgba(18, 26, 21, .18);
+
+  --sans:  system-ui, -apple-system, "Segoe UI Variable Text", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  --mono:  ui-monospace, "Cascadia Mono", "Cascadia Code", Consolas, "SF Mono", Menlo, monospace;
+
+  --step--1: clamp(.78rem, .76rem + .1vw, .84rem);
+  --step-0:  clamp(1rem, .97rem + .16vw, 1.1rem);
+  --step-1:  clamp(1.2rem, 1.13rem + .34vw, 1.45rem);
+  --step-2:  clamp(1.5rem, 1.36rem + .68vw, 2rem);
+  --step-3:  clamp(2rem, 1.7rem + 1.5vw, 3.15rem);
+  --step-4:  clamp(2.6rem, 2rem + 3vw, 4.6rem);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper:    #0B120E;
+    --paper-2:  #121B15;
+    --card:     #141E18;
+    --ink:      #E7EDE8;
+    --ink-2:    #B3C2B8;
+    --muted:    #849289;
+    --rule:     #24322A;
+    --rule-2:   #33443A;
+    --green:    #3ECB7D;
+    --green-hi: #6FE6A4;
+    --clay:     #E09669;
+    --wash:     rgba(62, 203, 125, .09);
+    --shadow:   0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px -12px rgba(0, 0, 0, .7);
+  }
+}
+
+:root[data-theme="dark"] {
+  --paper:    #0B120E;
+  --paper-2:  #121B15;
+  --card:     #141E18;
+  --ink:      #E7EDE8;
+  --ink-2:    #B3C2B8;
+  --muted:    #849289;
+  --rule:     #24322A;
+  --rule-2:   #33443A;
+  --green:    #3ECB7D;
+  --green-hi: #6FE6A4;
+  --clay:     #E09669;
+  --wash:     rgba(62, 203, 125, .09);
+  --shadow:   0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px -12px rgba(0, 0, 0, .7);
+}
+
+:root[data-theme="light"] {
+  --paper:    #F4F6F2;
+  --paper-2:  #E9EDE5;
+  --card:     #FFFFFF;
+  --ink:      #121A15;
+  --ink-2:    #3B4A41;
+  --muted:    #6B7A70;
+  --rule:     #D2DACF;
+  --rule-2:   #B9C4BC;
+  --green:    #0B6E3E;
+  --green-hi: #095B33;
+  --clay:     #8A4A2C;
+  --wash:     rgba(11, 110, 62, .07);
+  --shadow:   0 1px 2px rgba(18, 26, 21, .05), 0 8px 24px -12px rgba(18, 26, 21, .18);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Base
+   ───────────────────────────────────────────────────────────── */
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: var(--step-0);
+  line-height: 1.65;
+}
+
+h1, h2, h3 {
+  font-family: var(--sans);
+  font-weight: 800;
+  letter-spacing: -.03em;
+  line-height: 1.05;
+  text-wrap: balance;
+  margin: 0;
+}
+
+p { margin: 0; }
+
+a { color: inherit; }
+
+:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.wrap {
+  width: min(100% - 2.5rem, 62rem);
+  margin-inline: auto;
+}
+
+.prose {
+  width: min(100%, 36rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  color: var(--ink-2);
+}
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: var(--step--1);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0;
+}
+
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+section { padding-block: clamp(3.5rem, 8vw, 6.5rem); }
+
+.band { background: var(--paper-2); }
+
+.rule-top { border-top: 1px solid var(--rule); }
+
+/* ─────────────────────────────────────────────────────────────
+   Cabeçalho
+   ───────────────────────────────────────────────────────────── */
+.topbar {
+  border-bottom: 1px solid var(--rule);
+  padding-block: 1rem;
+}
+
+.topbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.brand {
+  font-family: var(--mono);
+  font-size: var(--step--1);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+}
+
+.brand__mark {
+  width: .7rem;
+  height: .7rem;
+  background: var(--green);
+  border-radius: 1px;
+  flex: none;
+}
+
+.themetoggle {
+  font-family: var(--mono);
+  font-size: var(--step--1);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  background: none;
+  border: 1px solid var(--rule-2);
+  color: var(--muted);
+  padding: .4rem .7rem;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.themetoggle:hover { color: var(--ink); border-color: var(--ink-2); }
+
+/* ─────────────────────────────────────────────────────────────
+   Herói
+   ───────────────────────────────────────────────────────────── */
+.hero { padding-block: clamp(3rem, 7vw, 5.5rem) clamp(3.5rem, 8vw, 6rem); }
+
+.hero__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(2.5rem, 5vw, 4rem);
+  align-items: start;
+}
+
+@media (min-width: 60rem) {
+  .hero__grid { grid-template-columns: 1.05fr .95fr; gap: 4rem; }
+}
+
+.hero__lede {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+.hero h1 {
+  font-size: var(--step-4);
+}
+
+.hero h1 em {
+  font-style: normal;
+  color: var(--green);
+}
+
+.hero__sub {
+  font-size: var(--step-1);
+  color: var(--ink-2);
+  line-height: 1.5;
+  max-width: 30ch;
+}
+
+.hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem .75rem;
+  font-family: var(--mono);
+  font-size: var(--step--1);
+  color: var(--muted);
+  letter-spacing: .04em;
+}
+
+.hero__meta span { display: flex; align-items: center; gap: .4rem; }
+
+.hero__meta span::before {
+  content: "";
+  width: 4px; height: 4px;
+  background: var(--green);
+  border-radius: 50%;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Fita da calculadora
+   ───────────────────────────────────────────────────────────── */
+.tape {
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  box-shadow: var(--shadow);
+  padding: clamp(1.25rem, 3vw, 1.9rem);
+}
+
+.tape__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: .35rem;
+}
+
+.tape__title {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: var(--step-0);
+  letter-spacing: -.01em;
+}
+
+.tape__date { font-size: var(--step--1); color: var(--muted); letter-spacing: .06em; }
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: 1rem;
+  padding-block: .62rem;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--step-0);
+}
+
+.row__label {
+  font-size: var(--step--1);
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.row__val { white-space: nowrap; }
+
+.row--minus .row__val { color: var(--clay); }
+
+.row--sum {
+  border-top: 2px solid var(--ink);
+  margin-top: .6rem;
+  padding-top: .95rem;
+}
+
+.row--sum .row__label {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.row--sum .row__val {
+  font-size: var(--step-2);
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: -.02em;
+}
+
+.row--pct { padding-top: .1rem; }
+.row--pct .row__val { color: var(--green); }
+
+.tape__foot {
+  margin-top: 1.1rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--rule-2);
+  font-family: var(--sans);
+  font-size: var(--step--1);
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* Revelação encadeada da fita */
+@media (prefers-reduced-motion: no-preference) {
+  .tape .row { opacity: 0; transform: translateY(6px); }
+  .tape.is-live .row {
+    animation: rowIn .5s cubic-bezier(.2, .7, .3, 1) forwards;
+    animation-delay: calc(var(--i) * 160ms);
+  }
+  .tape.is-live .row--sum { animation-delay: calc(var(--i) * 160ms + 120ms); }
+}
+
+@keyframes rowIn {
+  to { opacity: 1; transform: none; }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Botões
+   ───────────────────────────────────────────────────────────── */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: .7rem;
+  background: var(--green);
+  color: var(--paper);
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: var(--step-0);
+  letter-spacing: -.01em;
+  text-decoration: none;
+  padding: .95rem 1.5rem;
+  border-radius: 3px;
+  border: 1px solid var(--green);
+  transition: transform .12s ease, background-color .12s ease;
+}
+
+.cta:hover { background: var(--green-hi); border-color: var(--green-hi); transform: translateY(-1px); }
+.cta:active { transform: none; }
+
+.cta__price {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  padding-left: .7rem;
+  margin-left: .1rem;
+  border-left: 1px solid color-mix(in srgb, var(--paper) 35%, transparent);
+  opacity: .85;
+}
+
+.cta-group {
+  display: flex;
+  flex-direction: column;
+  gap: .7rem;
+  align-items: flex-start;
+}
+
+.cta-note {
+  font-family: var(--sans);
+  font-size: var(--step--1);
+  color: var(--muted);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Cabeçalho de seção
+   ───────────────────────────────────────────────────────────── */
+.sec-head {
+  display: flex;
+  flex-direction: column;
+  gap: .9rem;
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+  max-width: 42rem;
+}
+
+.sec-head h2 { font-size: var(--step-3); }
+
+.sec-head p { color: var(--ink-2); max-width: 34rem; }
+
+/* ─────────────────────────────────────────────────────────────
+   Abas do produto
+   ───────────────────────────────────────────────────────────── */
+.tabs {
+  display: grid;
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+@media (min-width: 52rem) {
+  .tabs { grid-template-columns: repeat(3, 1fr); }
+}
+
+.tab {
+  background: var(--card);
+  padding: clamp(1.4rem, 3vw, 2rem);
+  display: flex;
+  flex-direction: column;
+  gap: .8rem;
+}
+
+.tab__name {
+  font-family: var(--mono);
+  font-size: var(--step--1);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--green);
+}
+
+.tab h3 { font-size: var(--step-1); }
+
+.tab p { color: var(--ink-2); font-size: calc(var(--step-0) * .96); }
+
+.tab__list {
+  list-style: none;
+  margin: .2rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+  font-family: var(--sans);
+  font-size: var(--step--1);
+  color: var(--muted);
+}
+
+.tab__list li {
+  display: flex;
+  gap: .55rem;
+  align-items: baseline;
+  line-height: 1.45;
+}
+
+.tab__list li::before {
+  content: "";
+  flex: none;
+  width: 5px; height: 5px;
+  margin-top: .45em;
+  border-radius: 1px;
+  background: var(--rule-2);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Tabela de períodos
+   ───────────────────────────────────────────────────────────── */
+.tablewrap {
+  overflow-x: auto;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  background: var(--card);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--step--1);
+  white-space: nowrap;
+}
+
+thead th {
+  text-align: right;
+  font-weight: 400;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--paper);
+  background: var(--ink);
+  padding: .8rem 1rem;
+}
+
+thead th:first-child { text-align: left; }
+
+tbody td {
+  text-align: right;
+  padding: .78rem 1rem;
+  border-top: 1px solid var(--rule);
+  color: var(--ink-2);
+}
+
+tbody th {
+  text-align: left;
+  padding: .78rem 1rem;
+  border-top: 1px solid var(--rule);
+  font-weight: 700;
+  color: var(--ink);
+  font-family: var(--sans);
+  letter-spacing: -.01em;
+}
+
+tbody td.is-cost { color: var(--clay); }
+tbody td.is-profit { color: var(--green); font-weight: 700; }
+
+/* ─────────────────────────────────────────────────────────────
+   Passos
+   ───────────────────────────────────────────────────────────── */
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1px;
+  background: var(--rule);
+  border-block: 1px solid var(--rule);
+}
+
+@media (min-width: 52rem) {
+  .steps { grid-template-columns: repeat(3, 1fr); }
+}
+
+.step {
+  background: var(--paper);
+  padding: clamp(1.5rem, 3vw, 2.2rem) clamp(1.2rem, 2.5vw, 1.8rem);
+  display: flex;
+  flex-direction: column;
+  gap: .7rem;
+}
+
+.step__n {
+  font-family: var(--mono);
+  font-size: var(--step--1);
+  letter-spacing: .1em;
+  color: var(--green);
+}
+
+.step h3 { font-size: var(--step-1); }
+
+.step p { color: var(--ink-2); font-size: calc(var(--step-0) * .96); }
+
+/* ─────────────────────────────────────────────────────────────
+   Duas colunas (para quem é / não é)
+   ───────────────────────────────────────────────────────────── */
+.split {
+  display: grid;
+  gap: clamp(2rem, 4vw, 3.5rem);
+}
+
+@media (min-width: 52rem) { .split { grid-template-columns: 1fr 1fr; } }
+
+.split h3 {
+  font-size: var(--step-1);
+  margin-bottom: 1.1rem;
+  padding-bottom: .7rem;
+  border-bottom: 1px solid var(--rule-2);
+}
+
+.checks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .85rem;
+  color: var(--ink-2);
+  font-size: calc(var(--step-0) * .97);
+}
+
+.checks li { display: flex; gap: .8rem; align-items: baseline; line-height: 1.5; }
+
+.checks li::before {
+  font-family: var(--mono);
+  font-size: var(--step--1);
+  flex: none;
+  content: "SIM";
+  color: var(--green);
+  letter-spacing: .06em;
+}
+
+.checks--no li::before { content: "NÃO"; color: var(--clay); }
+
+/* ─────────────────────────────────────────────────────────────
+   Preço
+   ───────────────────────────────────────────────────────────── */
+.pricecard {
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  box-shadow: var(--shadow);
+  padding: clamp(1.6rem, 4vw, 2.6rem);
+  display: grid;
+  gap: clamp(1.8rem, 4vw, 3rem);
+  align-items: center;
+}
+
+@media (min-width: 52rem) { .pricecard { grid-template-columns: 1fr auto; } }
+
+.pricecard__list {
+  list-style: none;
+  margin: 1.1rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .6rem;
+  font-family: var(--sans);
+  font-size: var(--step--1);
+  color: var(--ink-2);
+}
+
+.pricecard__list li { display: flex; gap: .6rem; align-items: baseline; }
+
+.pricecard__list li::before {
+  content: "+";
+  font-family: var(--mono);
+  color: var(--green);
+  flex: none;
+}
+
+.price {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+@media (min-width: 52rem) { .price { align-items: flex-end; text-align: right; } }
+
+.price__value {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--step-4);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -.04em;
+  color: var(--ink);
+}
+
+.price__value small {
+  font-size: .38em;
+  font-weight: 400;
+  color: var(--muted);
+  letter-spacing: .04em;
+}
+
+.price__terms {
+  font-family: var(--sans);
+  font-size: var(--step--1);
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   FAQ
+   ───────────────────────────────────────────────────────────── */
+.faq { display: flex; flex-direction: column; }
+
+.faq details {
+  border-top: 1px solid var(--rule);
+  padding-block: .35rem;
+}
+
+.faq details:last-of-type { border-bottom: 1px solid var(--rule); }
+
+.faq summary {
+  cursor: pointer;
+  list-style: none;
+  padding-block: 1.05rem;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: calc(var(--step-0) * 1.02);
+  letter-spacing: -.01em;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1.5rem;
+}
+
+.faq summary::-webkit-details-marker { display: none; }
+
+.faq summary::after {
+  content: "+";
+  font-family: var(--mono);
+  color: var(--green);
+  flex: none;
+  font-weight: 400;
+}
+
+.faq details[open] summary::after { content: "–"; }
+
+.faq p {
+  color: var(--ink-2);
+  padding-bottom: 1.15rem;
+  max-width: 42rem;
+  font-size: calc(var(--step-0) * .97);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Rodapé
+   ───────────────────────────────────────────────────────────── */
+footer {
+  border-top: 1px solid var(--rule);
+  padding-block: 2.5rem 3.5rem;
+  font-family: var(--sans);
+  font-size: var(--step--1);
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.footer__inner { display: flex; flex-direction: column; gap: .6rem; }
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar__inner">
+    <div class="brand"><span class="brand__mark"></span> Planilha Prática</div>
+    <button class="themetoggle" id="tema" type="button">Tema</button>
+  </div>
+</header>
+
+<!-- ══════════════════════════ HERÓI ══════════════════════════ -->
+<section class="hero">
+  <div class="wrap hero__grid">
+
+    <div class="hero__lede">
+      <p class="eyebrow">Planilha · Google Sheets · Acesso imediato</p>
+
+      <h1>Você vendeu R$&nbsp;1.250.<br><em>Quanto sobrou?</em></h1>
+
+      <p class="hero__sub">
+        A maioria dos pequenos negócios sabe quanto vendeu e não sabe quanto ganhou.
+        Essa planilha faz essa conta sozinha, todo dia.
+      </p>
+
+      <div class="cta-group">
+        <!-- TROQUE href pelo link de checkout da Hotmart -->
+        <a class="cta" href="#preco">
+          Quero ver meu lucro real
+          <span class="cta__price">R$&nbsp;47</span>
+        </a>
+        <p class="cta-note">Pagamento único. Sem mensalidade. Acesso na hora.</p>
+      </div>
+
+      <div class="hero__meta">
+        <span>Funciona no celular</span>
+        <span>Não precisa instalar nada</span>
+        <span>É sua para sempre</span>
+      </div>
+    </div>
+
+    <div class="tape" id="fita">
+      <div class="tape__head">
+        <span class="tape__title">Uma venda de camisetas</span>
+        <span class="tape__date num">HOJE</span>
+      </div>
+
+      <div class="row" style="--i:0">
+        <span class="row__label">Faturamento</span>
+        <span class="row__val">1.250,00</span>
+      </div>
+
+      <div class="row row--minus" style="--i:1">
+        <span class="row__label">Custo dos produtos</span>
+        <span class="row__val">− 480,00</span>
+      </div>
+
+      <div class="row row--minus" style="--i:2">
+        <span class="row__label">Despesas do mês</span>
+        <span class="row__val">− 389,90</span>
+      </div>
+
+      <div class="row row--sum" style="--i:3">
+        <span class="row__label">Receita real</span>
+        <span class="row__val" id="total">380,10</span>
+      </div>
+
+      <div class="row row--pct" style="--i:4">
+        <span class="row__label">Margem de lucro</span>
+        <span class="row__val">30,4%</span>
+      </div>
+
+      <p class="tape__foot">
+        Foi isso que sobrou no seu bolso. A planilha calcula essa linha automaticamente,
+        a cada venda que você anota.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════ PROBLEMA ══════════════════════════ -->
+<section class="band rule-top">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">O problema</p>
+      <h2>Vender muito não é a mesma coisa que ganhar dinheiro.</h2>
+    </div>
+
+    <div class="prose">
+      <p>
+        Você olha o extrato no fim do mês, vê que entrou bastante, e mesmo assim a conta
+        não fecha. Isso acontece porque três coisas diferentes estão misturadas na sua cabeça:
+        o que você <strong>vendeu</strong>, o que aquela venda <strong>custou</strong>, e o
+        que você gasta para manter o negócio <strong>de pé</strong>.
+      </p>
+      <p>
+        Enquanto elas estiverem juntas, você não consegue responder às perguntas que decidem
+        o seu mês: dá para baixar o preço? Qual produto vale a pena empurrar? O anúncio se
+        pagou? Posso contratar?
+      </p>
+      <p>
+        Essa planilha separa as três. Você anota a venda e o custo dela, anota as despesas, e
+        pronto — o número que importa aparece sozinho.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ AS ABAS ══════════════════════════ -->
+<section class="rule-top">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">O que você recebe</p>
+      <h2>Três abas. Você só digita em uma.</h2>
+      <p>Sem curso, sem módulos, sem comunidade. É uma ferramenta que abre e funciona.</p>
+    </div>
+
+    <div class="tabs">
+      <article class="tab">
+        <span class="tab__name">Lançamentos</span>
+        <h3>Onde você anota</h3>
+        <p>Uma linha por venda ou gasto. Data, tipo, categoria, valor. As listas já vêm prontas.</p>
+        <ul class="tab__list">
+          <li>Menus prontos: você escolhe, não digita</li>
+          <li>Marca o que já foi pago e o que está pendente</li>
+          <li>Avisa em vermelho se você errar o preenchimento</li>
+        </ul>
+      </article>
+
+      <article class="tab">
+        <span class="tab__name">Dashboard</span>
+        <h3>Onde você entende</h3>
+        <p>Cinco números grandes e dois gráficos. Atualiza sozinho a cada linha que você anota.</p>
+        <ul class="tab__list">
+          <li>Faturamento, custos, despesas, lucro e margem</li>
+          <li>Evolução mês a mês do ano inteiro</li>
+          <li>Gráfico de para onde o seu dinheiro está indo</li>
+        </ul>
+      </article>
+
+      <article class="tab">
+        <span class="tab__name">Configurações</span>
+        <h3>Onde você ajusta</h3>
+        <p>Suas categorias, do seu jeito — e um manual escrito para quem nunca mexeu em planilha.</p>
+        <ul class="tab__list">
+          <li>Crie e remova categorias em segundos</li>
+          <li>Manual passo a passo, campo por campo</li>
+          <li>Sem jargão de contador</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ PERÍODOS ══════════════════════════ -->
+<section class="band rule-top">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Resumo por período</p>
+      <h2>Hoje, esta semana, este mês e este ano — lado a lado.</h2>
+      <p>Sem filtro para configurar, sem botão para clicar. Você abre e os quatro já estão lá.</p>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Período</th>
+            <th scope="col">Faturamento</th>
+            <th scope="col">Custo produtos</th>
+            <th scope="col">Despesas</th>
+            <th scope="col">Receita real</th>
+            <th scope="col">Margem</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Hoje</th>
+            <td>1.250,00</td>
+            <td class="is-cost">480,00</td>
+            <td class="is-cost">389,90</td>
+            <td class="is-profit">380,10</td>
+            <td class="is-profit">30,4%</td>
+          </tr>
+          <tr>
+            <th scope="row">Esta semana</th>
+            <td>4.180,00</td>
+            <td class="is-cost">1.605,00</td>
+            <td class="is-cost">712,40</td>
+            <td class="is-profit">1.862,60</td>
+            <td class="is-profit">44,6%</td>
+          </tr>
+          <tr>
+            <th scope="row">Este mês</th>
+            <td>16.740,00</td>
+            <td class="is-cost">6.430,00</td>
+            <td class="is-cost">3.980,00</td>
+            <td class="is-profit">6.330,00</td>
+            <td class="is-profit">37,8%</td>
+          </tr>
+          <tr>
+            <th scope="row">Este ano</th>
+            <td>103.220,00</td>
+            <td class="is-cost">41.288,00</td>
+            <td class="is-cost">28.900,00</td>
+            <td class="is-profit">33.032,00</td>
+            <td class="is-profit">32,0%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="cta-note" style="margin-top:1rem">
+      Números de exemplo, para você ver o formato. A sua planilha começa zerada.
+    </p>
+  </div>
+</section>
+
+<!-- ══════════════════════════ COMO FUNCIONA ══════════════════════════ -->
+<section>
+  <div class="wrap sec-head">
+    <p class="eyebrow">Como funciona</p>
+    <h2>Da compra ao primeiro número: cinco minutos.</h2>
+  </div>
+
+  <ol class="steps">
+    <li class="step">
+      <span class="step__n">PASSO 1</span>
+      <h3>Você recebe o link</h3>
+      <p>
+        Assim que o pagamento é aprovado, chega no seu e-mail um PDF com o link da planilha.
+        Um clique e ela é copiada para a sua conta do Google.
+      </p>
+    </li>
+    <li class="step">
+      <span class="step__n">PASSO 2</span>
+      <h3>Ajusta suas categorias</h3>
+      <p>
+        As mais comuns já vêm preenchidas. Você troca o que não serve para o seu negócio e
+        acrescenta o que faltar. Cinco minutos, uma vez só.
+      </p>
+    </li>
+    <li class="step">
+      <span class="step__n">PASSO 3</span>
+      <h3>Anota e acompanha</h3>
+      <p>
+        Cada venda, cada gasto, uma linha. O Dashboard responde sozinho — no computador da
+        loja ou no celular, na fila do banco.
+      </p>
+    </li>
+  </ol>
+</section>
+
+<!-- ══════════════════════════ PARA QUEM ══════════════════════════ -->
+<section class="band rule-top">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Antes de comprar</p>
+      <h2>Isso aqui não é para todo mundo.</h2>
+      <p>Prefiro você fechar essa página agora do que pedir reembolso depois.</p>
+    </div>
+
+    <div class="split">
+      <div>
+        <h3>É para você se…</h3>
+        <ul class="checks">
+          <li>Você vende produto ou serviço e hoje controla no caderno, no WhatsApp ou na memória.</li>
+          <li>Você quer saber quanto sobra de cada venda, não só quanto entrou.</li>
+          <li>Você quer abrir e usar hoje, sem assistir aula nenhuma.</li>
+          <li>Você trabalha sozinho ou com uma equipe pequena.</li>
+        </ul>
+      </div>
+
+      <div>
+        <h3>Não é para você se…</h3>
+        <ul class="checks checks--no">
+          <li>Você precisa emitir nota fiscal ou boleto — isso é sistema de gestão, não planilha.</li>
+          <li>Você já usa um ERP e quer substituí-lo.</li>
+          <li>Você precisa de controle de estoque item a item.</li>
+          <li>Você quer um contador automático. Isso organiza os números, não substitui profissional.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ PREÇO ══════════════════════════ -->
+<section id="preco" class="rule-top">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Preço</p>
+      <h2>Paga uma vez. É sua.</h2>
+    </div>
+
+    <div class="pricecard">
+      <div>
+        <h3 style="font-family:var(--sans);font-size:var(--step-1);font-weight:800;letter-spacing:-.02em">
+          Planilha Prática de Gestão Financeira
+        </h3>
+        <ul class="pricecard__list">
+          <li>As três abas prontas: Lançamentos, Dashboard e Configurações</li>
+          <li>Cinco indicadores e dois gráficos automáticos</li>
+          <li>Resumo de hoje, semana, mês e ano</li>
+          <li>Manual completo dentro da própria planilha</li>
+          <li>Cópia sua, na sua conta Google, para sempre</li>
+        </ul>
+      </div>
+
+      <div class="price">
+        <p class="price__value">47<small>,00</small></p>
+        <div class="cta-group" style="align-items:inherit">
+          <!-- TROQUE href pelo link de checkout da Hotmart -->
+          <a class="cta" href="#">Comprar agora</a>
+          <p class="price__terms">
+            Pagamento à vista, em Real.<br>
+            Garantia de 7 dias garantida por lei.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ FAQ ══════════════════════════ -->
+<section class="band rule-top">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Perguntas</p>
+      <h2>O que costumam perguntar antes.</h2>
+    </div>
+
+    <div class="faq">
+      <details>
+        <summary>Preciso ter Excel?</summary>
+        <p>
+          Não. A planilha roda no Google Sheets, que é gratuito e abre no navegador. Você só
+          precisa de uma conta Google — a mesma do Gmail serve. Se quiser, dá para exportar
+          para Excel depois, mas não é necessário.
+        </p>
+      </details>
+
+      <details>
+        <summary>Funciona no celular?</summary>
+        <p>
+          Funciona. Baixe o aplicativo Google Planilhas na loja do seu celular e a planilha
+          estará lá. Na prática, a maioria anota as vendas pelo celular e olha o Dashboard
+          no computador, onde os gráficos ficam maiores.
+        </p>
+      </details>
+
+      <details>
+        <summary>Eu não entendo nada de planilha. Vou conseguir?</summary>
+        <p>
+          Sim. Você não vai criar nem editar fórmula nenhuma — tudo já está pronto. O que
+          você faz é escolher opções em listinhas e digitar valores. E a planilha vem com um
+          manual dentro dela, escrito passo a passo, campo por campo, sem termo técnico.
+        </p>
+      </details>
+
+      <details>
+        <summary>O que é esse tal de "custo do produto"?</summary>
+        <p>
+          É quanto aquela venda específica custou para você. Comprou a camiseta por R$ 20 e
+          vendeu por R$ 50: o custo do produto é R$ 20. É diferente de despesa, que existe
+          mesmo num mês sem venda nenhuma — como aluguel ou anúncio. Separar os dois é o que
+          revela o seu lucro de verdade.
+        </p>
+      </details>
+
+      <details>
+        <summary>Meus dados ficam com você?</summary>
+        <p>
+          Não. Ao clicar no link, uma cópia é criada dentro da sua própria conta Google. Ela
+          é sua, e eu não tenho acesso ao que você digita nela.
+        </p>
+      </details>
+
+      <details>
+        <summary>É uma assinatura?</summary>
+        <p>
+          Não. Você paga uma vez e a planilha é sua. Não há mensalidade, não há renovação e
+          não existe nada que possa ser desligado depois.
+        </p>
+      </details>
+
+      <details>
+        <summary>E se eu não gostar?</summary>
+        <p>
+          Você tem 7 dias para pedir reembolso, direto pela Hotmart, sem precisar justificar.
+          É o direito de arrependimento previsto no Código de Defesa do Consumidor.
+        </p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ FECHAMENTO ══════════════════════════ -->
+<section class="rule-top">
+  <div class="wrap">
+    <div class="sec-head" style="margin-bottom:1.6rem">
+      <h2>Amanhã você vai vender de novo.<br>Dessa vez, saiba quanto sobrou.</h2>
+    </div>
+    <div class="cta-group">
+      <!-- TROQUE href pelo link de checkout da Hotmart -->
+      <a class="cta" href="#">
+        Comprar agora
+        <span class="cta__price">R$&nbsp;47</span>
+      </a>
+      <p class="cta-note">Acesso imediato após a aprovação do pagamento.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer__inner">
+    <p>Planilha Prática de Gestão Financeira para Pequenos Negócios.</p>
+    <p>
+      Produto digital entregue como link de cópia do Google Sheets. Google Sheets é marca do
+      Google LLC, que não patrocina nem endossa este produto.
+    </p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  // Alterna claro/escuro e respeita a preferência do sistema como ponto de partida.
+  var raiz = document.documentElement;
+  var botao = document.getElementById('tema');
+
+  botao.addEventListener('click', function () {
+    var escuroAgora = raiz.getAttribute('data-theme') === 'dark' ||
+      (!raiz.hasAttribute('data-theme') &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches);
+    raiz.setAttribute('data-theme', escuroAgora ? 'light' : 'dark');
+  });
+
+  // Revela a fita quando ela entra na tela.
+  var fita = document.getElementById('fita');
+  var parado = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (parado || !('IntersectionObserver' in window)) {
+    fita.classList.add('is-live');
+    return;
+  }
+
+  var obs = new IntersectionObserver(function (entradas) {
+    entradas.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      fita.classList.add('is-live');
+      contar();
+      obs.disconnect();
+    });
+  }, { threshold: .35 });
+
+  obs.observe(fita);
+
+  // A receita real conta de zero até o valor: é o número que a página inteira defende.
+  function contar() {
+    var alvo = document.getElementById('total');
+    var fim = 380.10;
+    var dur = 900;
+    var atraso = 4 * 160 + 120;
+    var t0 = null;
+
+    function passo(t) {
+      if (!t0) t0 = t;
+      var p = Math.min((t - t0) / dur, 1);
+      var suave = 1 - Math.pow(1 - p, 3);
+      alvo.textContent = (fim * suave).toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+      if (p < 1) requestAnimationFrame(passo);
+    }
+
+    setTimeout(function () { requestAnimationFrame(passo); }, atraso);
+  }
+})();
+</script>
+
+</body>
+</html>
