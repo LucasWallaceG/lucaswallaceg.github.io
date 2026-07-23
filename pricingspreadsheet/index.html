@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<!--
+  ============================================================================
+  ANTES DE PUBLICAR NA HOTMART, SUBSTITUA OS 3 CAMPOS ABAIXO.
+  Procure no arquivo por a palavra:  SUBSTITUA
+    1. SUBSTITUA_LINK_PLANILHA  -> link do Google Sheets.
+        Dica: troque o final "/edit..." por "/copy" para o cliente
+        cair direto na tela "Fazer uma c&#243;pia".
+    2. SUBSTITUA_LINK_VIDEO     -> link do v&#237;deo tutorial (YouTube "n&#227;o listado").
+    3. SUBSTITUA_EMAIL          -> seu e-mail de suporte.
+  Para gerar o PDF: abra este arquivo no navegador > Ctrl+P > "Salvar como PDF".
+  ============================================================================
+-->
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calculadora de Precifica&#231;&#227;o + Gerador de Propostas no WhatsApp</title>
+<meta name="description" content="Descubra o valor real da sua hora de trabalho e envie or&#231;amentos prontos no WhatsApp com 1 clique. Ferramenta no Google Sheets para prestadores de servi&#231;o e aut&#244;nomos.">
+<style>
+  :root{
+    color-scheme: light dark;
+    --bg:#F4F6F4; --surface:#FFFFFF; --surface-2:#EDF1ED; --surface-3:#E4EBE5;
+    --ink:#15211D; --muted:#56635E; --faint:#7C8983; --line:#DCE4DE;
+    --brand:#0E9F6E; --brand-strong:#0A7A54; --brand-ink:#063d2a;
+    --gold:#B57B12; --gold-soft:#F6EAD0; --gold-line:#E7CE96;
+    --wa:#25D366; --wa-bubble:#DCF8C6; --wa-ink:#0b2e12;
+    --shadow: 0 1px 2px rgba(20,40,32,.05), 0 12px 34px -12px rgba(20,50,38,.18);
+    --shadow-sm: 0 1px 2px rgba(20,40,32,.06), 0 6px 16px -10px rgba(20,50,38,.16);
+    --radius:18px; --radius-sm:12px;
+    --sans: system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono: ui-monospace,"SF Mono","Cascadia Code",Menlo,Consolas,monospace;
+    --maxw: 1080px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0B1512; --surface:#111F1A; --surface-2:#16271F; --surface-3:#1C3026;
+      --ink:#ECEFEA; --muted:#A0B1A8; --faint:#7E9089; --line:#233529;
+      --brand:#33C48A; --brand-strong:#57DBA2; --brand-ink:#dffaee;
+      --gold:#E7B45A; --gold-soft:#2C2415; --gold-line:#4A3C1E;
+      --wa:#25D366; --wa-bubble:#123524; --wa-ink:#d6f5df;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 18px 40px -16px rgba(0,0,0,.6);
+      --shadow-sm: 0 1px 2px rgba(0,0,0,.3), 0 10px 22px -14px rgba(0,0,0,.55);
+    }
+  }
+  :root[data-theme="light"]{
+    --bg:#F4F6F4; --surface:#FFFFFF; --surface-2:#EDF1ED; --surface-3:#E4EBE5;
+    --ink:#15211D; --muted:#56635E; --faint:#7C8983; --line:#DCE4DE;
+    --brand:#0E9F6E; --brand-strong:#0A7A54; --brand-ink:#063d2a;
+    --gold:#B57B12; --gold-soft:#F6EAD0; --gold-line:#E7CE96;
+    --wa-bubble:#DCF8C6; --wa-ink:#0b2e12;
+    --shadow: 0 1px 2px rgba(20,40,32,.05), 0 12px 34px -12px rgba(20,50,38,.18);
+    --shadow-sm: 0 1px 2px rgba(20,40,32,.06), 0 6px 16px -10px rgba(20,50,38,.16);
+  }
+  :root[data-theme="dark"]{
+    --bg:#0B1512; --surface:#111F1A; --surface-2:#16271F; --surface-3:#1C3026;
+    --ink:#ECEFEA; --muted:#A0B1A8; --faint:#7E9089; --line:#233529;
+    --brand:#33C48A; --brand-strong:#57DBA2; --brand-ink:#dffaee;
+    --gold:#E7B45A; --gold-soft:#2C2415; --gold-line:#4A3C1E;
+    --wa-bubble:#123524; --wa-ink:#d6f5df;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 18px 40px -16px rgba(0,0,0,.6);
+    --shadow-sm: 0 1px 2px rgba(0,0,0,.3), 0 10px 22px -14px rgba(0,0,0,.55);
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--sans); font-size:clamp(1rem,.96rem + .2vw,1.08rem);
+    line-height:1.6; -webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(60vw 40vw at 90% -10%, color-mix(in srgb, var(--brand) 10%, transparent), transparent 70%),
+      radial-gradient(50vw 40vw at -10% 5%, color-mix(in srgb, var(--gold) 8%, transparent), transparent 70%);
+    background-repeat:no-repeat;
+  }
+  h1,h2,h3{margin:0; text-wrap:balance; line-height:1.1; letter-spacing:-.02em; font-weight:800;}
+  h1{font-size:clamp(2.2rem,1.3rem + 3.9vw,3.9rem);}
+  h2{font-size:clamp(1.7rem,1.2rem + 1.9vw,2.5rem); letter-spacing:-.025em;}
+  h3{font-size:1.22rem; letter-spacing:-.015em;}
+  p{margin:0;}
+  a{color:var(--brand-strong); text-underline-offset:3px; text-decoration-thickness:1.5px;}
+  strong{font-weight:700;}
+  .wrap{max-width:var(--maxw); margin-inline:auto; padding-inline:clamp(20px,5vw,40px);}
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:.78rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--brand-strong);
+  }
+  .eyebrow::before{content:""; width:22px; height:2px; background:var(--brand); border-radius:2px;}
+  .money{font-family:var(--mono); font-variant-numeric:tabular-nums; letter-spacing:-.02em;}
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    position:sticky; top:0; z-index:50;
+    background:color-mix(in srgb, var(--bg) 82%, transparent);
+    backdrop-filter:saturate(1.4) blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .topbar .wrap{display:flex; align-items:center; justify-content:space-between; gap:16px; padding-block:12px;}
+  .brand{display:flex; align-items:center; gap:11px; font-weight:800; letter-spacing:-.02em; font-size:1.02rem;}
+  .brand .mark{
+    width:34px; height:34px; border-radius:10px; flex:none; position:relative;
+    background:linear-gradient(150deg,var(--brand),var(--brand-strong));
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.18);
+  }
+  .brand .mark::before{
+    content:""; position:absolute; inset:9px; border-radius:3px;
+    background:
+      linear-gradient(var(--surface),var(--surface)) padding-box,
+      repeating-linear-gradient(0deg, transparent 0 4px, rgba(0,0,0,.14) 4px 5px),
+      repeating-linear-gradient(90deg, transparent 0 4px, rgba(0,0,0,.14) 4px 5px);
+    background-blend-mode:normal;
+    opacity:.95;
+  }
+  .btn{
+    --_bg:var(--brand); --_fg:#fff;
+    display:inline-flex; align-items:center; justify-content:center; gap:9px;
+    font:inherit; font-weight:700; letter-spacing:-.01em; cursor:pointer;
+    background:var(--_bg); color:var(--_fg); border:1px solid transparent;
+    padding:13px 22px; border-radius:999px; text-decoration:none;
+    box-shadow:var(--shadow-sm); transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+    white-space:nowrap;
+  }
+  .btn:hover{transform:translateY(-2px); box-shadow:var(--shadow);}
+  .btn:focus-visible{outline:3px solid color-mix(in srgb,var(--brand) 55%, transparent); outline-offset:2px;}
+  .btn.brand{background:linear-gradient(160deg,var(--brand),var(--brand-strong));}
+  .btn.ghost{--_bg:transparent; --_fg:var(--ink); border-color:var(--line); box-shadow:none;}
+  .btn.ghost:hover{border-color:var(--brand); color:var(--brand-strong);}
+  .btn.sm{padding:10px 18px; font-size:.95rem;}
+  .btn.big{padding:16px 30px; font-size:1.06rem;}
+  .topbar .btn{box-shadow:none;}
+
+  /* ---------- Hero ---------- */
+  .hero{padding-block:clamp(44px,7vw,84px) clamp(30px,5vw,56px);}
+  .hero-grid{display:grid; grid-template-columns:1.05fr .95fr; gap:clamp(28px,4vw,56px); align-items:center;}
+  .hero h1{margin-top:18px;}
+  .hero h1 .hl{color:var(--gold); white-space:nowrap;}
+  .lead{margin-top:20px; font-size:clamp(1.08rem,1rem + .5vw,1.28rem); color:var(--muted); max-width:34ch;}
+  .hero-cta{display:flex; flex-wrap:wrap; gap:14px; margin-top:30px;}
+  .microtrust{display:flex; flex-wrap:wrap; gap:8px 20px; margin-top:22px; color:var(--faint); font-size:.9rem;}
+  .microtrust span{display:inline-flex; align-items:center; gap:7px;}
+  .tick{color:var(--brand); font-weight:800;}
+
+  /* stacked visual */
+  .visual{position:relative; min-height:360px;}
+  .card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:var(--shadow);
+  }
+  .sheet{position:relative; z-index:2; padding:16px; max-width:360px; margin-inline:auto;}
+  .sheet-top{display:flex; align-items:center; gap:8px; padding:4px 6px 12px; border-bottom:1px solid var(--line); color:var(--faint); font-size:.82rem; font-weight:600;}
+  .dot{width:10px; height:10px; border-radius:50%; background:var(--surface-3);}
+  .dot.g{background:var(--brand);}
+  .sheet-tab{margin-left:auto; font-weight:700; color:var(--muted);}
+  .row{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:11px 8px; border-bottom:1px solid var(--line); font-size:.95rem;}
+  .row .lbl{color:var(--muted);}
+  .cell{font-family:var(--mono); font-variant-numeric:tabular-nums; padding:5px 10px; border-radius:8px; font-weight:600;}
+  .cell.in{background:var(--gold-soft); color:var(--gold); border:1px solid var(--gold-line);}
+  .cell.out{background:color-mix(in srgb,var(--brand) 14%, var(--surface)); color:var(--brand-strong); border:1px solid color-mix(in srgb,var(--brand) 30%, transparent);}
+  .result{display:flex; flex-direction:column; gap:2px; padding:14px 8px 4px;}
+  .result .k{font-size:.74rem; letter-spacing:.1em; text-transform:uppercase; color:var(--faint); font-weight:700;}
+  .result .v{font-family:var(--mono); font-variant-numeric:tabular-nums; font-size:2.1rem; font-weight:800; color:var(--gold); letter-spacing:-.03em;}
+
+  .wa{
+    position:absolute; z-index:3; right:-6px; bottom:-14px; width:min(260px,72%);
+    padding:12px 14px 10px; border-radius:16px 16px 16px 4px;
+    background:var(--wa-bubble); color:var(--wa-ink);
+    box-shadow:var(--shadow); border:1px solid color-mix(in srgb,var(--wa) 30%, transparent);
+    font-size:.82rem; line-height:1.45;
+  }
+  .wa .wa-head{display:flex; align-items:center; gap:7px; font-weight:800; margin-bottom:5px;}
+  .wa .wa-ico{width:18px;height:18px;border-radius:50%;background:var(--wa);display:grid;place-items:center;color:#fff;font-size:11px;flex:none;}
+  .wa .msg b{font-weight:800;}
+  .wa .meta{display:flex; justify-content:flex-end; align-items:center; gap:4px; margin-top:6px; font-size:.68rem; color:color-mix(in srgb,var(--wa-ink) 55%, transparent);}
+  .wa .ck{color:#34b7f1; font-weight:800;}
+
+  /* ---------- generic section ---------- */
+  section{padding-block:clamp(40px,6vw,72px);}
+  .section-head{max-width:60ch;}
+  .section-head h2{margin-top:14px;}
+  .section-head p{margin-top:14px; color:var(--muted); font-size:1.1rem;}
+
+  /* pain */
+  .pain{background:var(--surface-2); border-block:1px solid var(--line);}
+  .pain-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; margin-top:8px;}
+  .pain-card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-sm); padding:20px 20px 22px; box-shadow:var(--shadow-sm);}
+  .pain-card .ic{font-size:1.4rem; line-height:1;}
+  .pain-card p{margin-top:10px; color:var(--muted);}
+  .pain-card strong{color:var(--ink);}
+
+  /* includes */
+  .cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:20px; margin-top:36px;}
+  .feat{position:relative; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:26px 24px; box-shadow:var(--shadow-sm); overflow:hidden;}
+  .feat .num{font-family:var(--mono); font-weight:700; color:var(--brand); font-size:.85rem; letter-spacing:.05em;}
+  .feat h3{margin-top:14px;}
+  .feat p{margin-top:10px; color:var(--muted);}
+  .feat ul{margin:14px 0 0; padding:0; list-style:none; display:grid; gap:9px;}
+  .feat li{display:flex; gap:10px; align-items:flex-start; color:var(--muted); font-size:.96rem;}
+  .feat li .tick{margin-top:1px;}
+
+  /* steps */
+  .steps{display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:36px; counter-reset:s;}
+  .step{position:relative; padding:26px 22px; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow-sm);}
+  .step::before{
+    counter-increment:s; content:counter(s);
+    font-family:var(--mono); font-weight:800; font-size:1.05rem;
+    display:grid; place-items:center; width:40px; height:40px; border-radius:12px;
+    background:linear-gradient(160deg,var(--brand),var(--brand-strong)); color:#fff; margin-bottom:16px;
+  }
+  .step h3{font-size:1.12rem;}
+  .step p{margin-top:9px; color:var(--muted); font-size:.98rem;}
+
+  /* audience chips */
+  .chips{display:flex; flex-wrap:wrap; gap:11px; margin-top:26px;}
+  .chip{background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:9px 17px; font-weight:600; font-size:.96rem; box-shadow:var(--shadow-sm);}
+  .chip::before{content:""; display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--brand); margin-right:9px; vertical-align:middle;}
+
+  /* ACCESS (the PDF core) */
+  .access{scroll-margin-top:80px;}
+  .access-card{
+    position:relative; background:var(--surface); border:1px solid var(--line);
+    border-radius:calc(var(--radius) + 6px); padding:clamp(26px,4vw,44px);
+    box-shadow:var(--shadow); overflow:hidden;
+  }
+  .access-card::before{content:""; position:absolute; inset:0 auto 0 0; width:6px; background:linear-gradient(var(--brand),var(--gold));}
+  .access-head{display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:8px;}
+  .access-head h2{font-size:clamp(1.5rem,1.2rem + 1.4vw,2.1rem);}
+  .access-note{color:var(--muted); margin-top:12px; max-width:60ch;}
+  .access-list{display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:28px;}
+  .dl{display:flex; flex-direction:column; gap:12px; padding:22px; border:1px solid var(--line); border-radius:var(--radius); background:var(--surface-2);}
+  .dl .dl-top{display:flex; align-items:center; gap:12px;}
+  .dl .dl-ico{width:44px; height:44px; border-radius:12px; flex:none; display:grid; place-items:center; font-size:1.35rem; background:var(--surface); border:1px solid var(--line);}
+  .dl h3{font-size:1.08rem;}
+  .dl .dl-sub{color:var(--faint); font-size:.86rem;}
+  .dl p{color:var(--muted); font-size:.95rem;}
+  .dl .btn{margin-top:2px;}
+  .access-url{font-family:var(--mono); font-size:.78rem; color:var(--faint); word-break:break-all; padding:9px 12px; background:var(--surface); border:1px dashed var(--line); border-radius:8px;}
+  .access-foot{margin-top:26px; padding-top:22px; border-top:1px solid var(--line); display:flex; flex-wrap:wrap; gap:8px 24px; align-items:center; color:var(--muted); font-size:.95rem;}
+
+  /* faq */
+  .faq{display:grid; gap:12px; margin-top:32px; max-width:820px;}
+  details{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-sm); padding:4px 20px; box-shadow:var(--shadow-sm);}
+  details+details{margin-top:0;}
+  summary{cursor:pointer; font-weight:700; padding:16px 0; list-style:none; display:flex; justify-content:space-between; align-items:center; gap:16px;}
+  summary::-webkit-details-marker{display:none;}
+  summary::after{content:"+"; font-family:var(--mono); color:var(--brand); font-size:1.3rem; transition:transform .2s ease;}
+  details[open] summary::after{transform:rotate(45deg);}
+  details p{color:var(--muted); padding:0 0 18px; margin:0;}
+
+  /* footer */
+  footer{border-top:1px solid var(--line); background:var(--surface-2); padding-block:34px; margin-top:20px;}
+  footer .wrap{display:flex; flex-wrap:wrap; gap:18px 40px; justify-content:space-between; align-items:center;}
+  .foot-brand{display:flex; align-items:center; gap:11px; font-weight:800;}
+  .foot-legal{color:var(--faint); font-size:.85rem; max-width:52ch;}
+
+  /* print-only header */
+  .print-head{display:none;}
+
+  @media (max-width:820px){
+    .hero-grid{grid-template-columns:1fr;}
+    .visual{order:-1; min-height:320px;}
+    .steps{grid-template-columns:1fr;}
+    .access-list{grid-template-columns:1fr;}
+    .lead{max-width:none;}
+  }
+
+  @media (prefers-reduced-motion:no-preference){
+    .reveal{opacity:0; transform:translateY(16px); animation:rise .7s cubic-bezier(.2,.7,.2,1) forwards;}
+    .d1{animation-delay:.05s;} .d2{animation-delay:.15s;} .d3{animation-delay:.25s;}
+    .d4{animation-delay:.35s;} .d5{animation-delay:.5s;}
+    .wa{animation:pop .5s .55s cubic-bezier(.2,1.3,.4,1) both;}
+    @keyframes rise{to{opacity:1; transform:none;}}
+    @keyframes pop{from{opacity:0; transform:scale(.9) translateY(10px);} to{opacity:1; transform:none;}}
+  }
+
+  /* ============ PRINT / PDF ============ */
+  @media print{
+    :root{
+      --bg:#fff; --surface:#fff; --surface-2:#fff; --surface-3:#f1f1f1;
+      --ink:#111; --muted:#333; --faint:#555; --line:#c9c9c9;
+      --brand:#0A7A54; --brand-strong:#0A7A54; --gold:#9a6a10;
+      --shadow:none; --shadow-sm:none;
+    }
+    @page{margin:14mm 14mm 16mm;}
+    body{background:#fff !important; background-image:none; font-size:11.2pt; color:#111;}
+    .topbar, .hero-cta, .microtrust, .btn, .faq summary::after, .foot-brand .mark{display:none !important;}
+    .wa{position:static; width:auto; max-width:100%; margin-top:14px; box-shadow:none; page-break-inside:avoid;}
+    .visual{min-height:0;}
+    .hero{padding-top:6px;}
+    .reveal{opacity:1 !important; transform:none !important; animation:none !important;}
+    section{padding-block:14px; page-break-inside:avoid;}
+    .card,.feat,.step,.pain-card,.dl,details,.access-card{box-shadow:none !important; border-color:#c9c9c9;}
+    .print-head{display:block; border-bottom:2px solid #0A7A54; padding-bottom:10px; margin-bottom:8px;}
+    .print-head .ttl{font-weight:800; font-size:14pt; letter-spacing:-.02em;}
+    .print-head .sub{color:#444; font-size:9.5pt; margin-top:2px;}
+    .access-card::before{display:none;}
+    .access-url{border-style:solid; color:#0A7A54;}
+    details[open]{}
+    details{page-break-inside:avoid;}
+    a{color:#0A7A54; text-decoration:underline;}
+    footer{background:#fff; page-break-inside:avoid;}
+    h1{font-size:22pt;} h2{font-size:15pt;}
+  }
+</style>
+</head>
+<body>
+
+  <!-- Cabe&#231;alho que aparece s&#243; no PDF impresso -->
+  <div class="print-head wrap">
+    <div class="ttl">Calculadora de Precifica&#231;&#227;o Inteligente + Gerador de Propostas via WhatsApp</div>
+    <div class="sub">Documento de acesso ao produto &#8212; guarde este arquivo. Os links de acesso est&#227;o na se&#231;&#227;o "Acesso ao produto".</div>
+  </div>
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="wrap">
+      <div class="brand"><span class="mark"></span> Precifica<span style="color:var(--brand-strong)">+</span></div>
+      <a href="#acesso" class="btn brand sm">Acessar o produto</a>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow reveal d1">Google Sheets &#8226; Sem instalar nada</span>
+        <h1 class="reveal d2">Descubra o valor real da sua hora e mande or&#231;amentos <span class="hl">prontos no WhatsApp</span>.</h1>
+        <p class="lead reveal d3">Uma ferramenta simples que calcula quanto voc&#234; precisa cobrar para parar de trabalhar no vermelho &#8212; e gera a proposta para o cliente com <strong>1 clique</strong>.</p>
+        <div class="hero-cta reveal d4">
+          <a href="#acesso" class="btn brand big">Acessar minha planilha</a>
+          <a href="#como" class="btn ghost big">Ver como funciona</a>
+        </div>
+        <div class="microtrust reveal d5">
+          <span><span class="tick">&#10003;</span> Pronta para usar</span>
+          <span><span class="tick">&#10003;</span> Funciona no celular e no PC</span>
+          <span><span class="tick">&#10003;</span> V&#237;deo tutorial incluso</span>
+        </div>
+      </div>
+
+      <!-- Mockup 100% CSS: planilha + bal&#227;o WhatsApp -->
+      <div class="visual reveal d3" aria-hidden="true">
+        <div class="card sheet">
+          <div class="sheet-top"><span class="dot g"></span><span class="dot"></span><span class="dot"></span><span class="sheet-tab">1. Descubra sua Hora</span></div>
+          <div class="row"><span class="lbl">Quanto quer ganhar por m&#234;s</span><span class="cell in">R$ 3.000</span></div>
+          <div class="row"><span class="lbl">Gastos do trabalho</span><span class="cell in">R$ 800</span></div>
+          <div class="row"><span class="lbl">Horas &#250;teis no m&#234;s</span><span class="cell out">173,3</span></div>
+          <div class="result">
+            <span class="k">Valor ideal da sua hora</span>
+            <span class="v">R$ 27,50</span>
+          </div>
+        </div>
+        <div class="wa">
+          <div class="wa-head"><span class="wa-ico">&#10003;</span> Or&#231;amento &#8226; Jo&#227;o</div>
+          <div class="msg">Ol&#225; Jo&#227;o! &#128522;<br>&#128176; Valor: <b>R$ 325,00</b><br>&#9201; Tempo estimado: 10 horas</div>
+          <div class="meta">enviado <span class="ck">&#10003;&#10003;</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dor -->
+  <section class="pain">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">O problema de sempre</span>
+        <h2>Trabalha muito, mas n&#227;o v&#234; a cor do dinheiro?</h2>
+      </div>
+      <div class="pain-grid">
+        <div class="pain-card">
+          <div class="ic">&#129300;</div>
+          <p><strong>Voc&#234; "chuta" o pre&#231;o</strong> com medo de perder o cliente &#8212; e &#224;s vezes trabalha quase de gra&#231;a.</p>
+        </div>
+        <div class="pain-card">
+          <div class="ic">&#129534;</div>
+          <p><strong>Esquece de somar os custos</strong> (internet, luz, material, transporte) e o lucro some no fim do m&#234;s.</p>
+        </div>
+        <div class="pain-card">
+          <div class="ic">&#9203;</div>
+          <p><strong>Perde tempo</strong> montando cada or&#231;amento do zero, sem um padr&#227;o bonito para enviar.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- O que voc&#234; recebe -->
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">O que voc&#234; recebe</span>
+        <h2>Duas ferramentas em uma planilha s&#243;</h2>
+        <p>Feita para ser usada por qualquer pessoa, de qualquer idade. Voc&#234; s&#243; preenche os campos amarelos &#8212; o resto &#233; autom&#225;tico.</p>
+      </div>
+      <div class="cards">
+        <div class="feat">
+          <span class="num">ABA 1</span>
+          <h3>Descubra sua hora</h3>
+          <p>Responda a perguntas simples e a planilha revela o m&#237;nimo que voc&#234; deve cobrar por hora.</p>
+          <ul>
+            <li><span class="tick">&#10003;</span> Considera seu sal&#225;rio desejado</li>
+            <li><span class="tick">&#10003;</span> Soma seus custos fixos</li>
+            <li><span class="tick">&#10003;</span> Inclui uma reserva para imprevistos</li>
+          </ul>
+        </div>
+        <div class="feat">
+          <span class="num">ABA 2</span>
+          <h3>Gerador de or&#231;amentos</h3>
+          <p>Diga o servi&#231;o e as horas; ela calcula o pre&#231;o justo e escreve a proposta pronta.</p>
+          <ul>
+            <li><span class="tick">&#10003;</span> Pre&#231;o calculado na hora</li>
+            <li><span class="tick">&#10003;</span> Mensagem profissional montada sozinha</li>
+            <li><span class="tick">&#10003;</span> Bot&#227;o que abre o WhatsApp do cliente</li>
+          </ul>
+        </div>
+        <div class="feat">
+          <span class="num">B&#212;NUS</span>
+          <h3>V&#237;deo tutorial</h3>
+          <p>Um passo a passo curto e direto mostrando como usar tudo em poucos minutos.</p>
+          <ul>
+            <li><span class="tick">&#10003;</span> Sem enrola&#231;&#227;o</li>
+            <li><span class="tick">&#10003;</span> Assista quantas vezes quiser</li>
+            <li><span class="tick">&#10003;</span> No computador ou no celular</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Como funciona -->
+  <section id="como">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Como funciona</span>
+        <h2>Do zero ao or&#231;amento enviado em 3 passos</h2>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <h3>Fa&#231;a sua c&#243;pia</h3>
+          <p>Abra o link da planilha e clique em "Fazer uma c&#243;pia". Ela fica salva s&#243; sua, no seu Google.</p>
+        </div>
+        <div class="step">
+          <h3>Preencha uma vez</h3>
+          <p>Informe seus dados na aba "Descubra sua Hora". Pronto: voc&#234; j&#225; sabe quanto vale seu tempo.</p>
+        </div>
+        <div class="step">
+          <h3>Gere e envie</h3>
+          <p>Na aba de or&#231;amentos, digite o servi&#231;o e clique no bot&#227;o verde. O WhatsApp abre com a proposta pronta.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Para quem &#233; -->
+  <section class="pain">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Para quem &#233;</span>
+        <h2>Feita para quem vive do pr&#243;prio servi&#231;o</h2>
+      </div>
+      <div class="chips">
+        <span class="chip">Designers</span>
+        <span class="chip">Manicures</span>
+        <span class="chip">Pintores</span>
+        <span class="chip">Consultores</span>
+        <span class="chip">Fot&#243;grafos</span>
+        <span class="chip">Diaristas</span>
+        <span class="chip">Freelancers</span>
+        <span class="chip">Eletricistas</span>
+        <span class="chip">Confeiteiras</span>
+        <span class="chip">Aut&#244;nomos em geral</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACESSO (n&#250;cleo do PDF) -->
+  <section class="access" id="acesso">
+    <div class="wrap">
+      <div class="access-card">
+        <div class="access-head">
+          <div>
+            <span class="eyebrow">Acesso ao produto</span>
+            <h2>Comece agora</h2>
+          </div>
+        </div>
+        <p class="access-note">Acesso imediato após a confirmação do pagamento</p>
+        
+        <div class="access-list">
+          <div class="dl">
+            <div class="dl-top">
+              <span class="dl-ico">&#128202;</span>
+              <div>
+                <h3>Sua Planilha</h3>
+                <span class="dl-sub">Google Sheets</span>
+              </div>
+            </div>
+            <p>Descubra quanto cobrar e gere propostas profissionais para o WhatsApp em minutos.</p>
+            <a class="btn brand" href="https://pay.hotmart.com/A106846951P" target="_blank">Comprar com acesso imediato</a>
+            <span class="access-url">https://pay.hotmart.com/A106846951P</span>
+          </div>
+
+          <div class="dl">
+            <div class="dl-top">
+              <span class="dl-ico">&#9654;&#65039;</span>
+              <div>
+                <h3>V&#237;deo Tutorial</h3>
+                <span class="dl-sub">Assista antes de come&#231;ar</span>
+              </div>
+            </div>
+            <p>Um passo a passo curto mostrando como preencher e como enviar propostas pelo WhatsApp.</p>
+            <a class="btn brand" href="https://www.youtube.com/watch?v=qr6BjimO6wA" target="_blank">Assistir ao tutorial</a>
+            <span class="access-url">https://www.youtube.com/watch?v=qr6BjimO6wA</span>
+          </div>
+        </div>
+
+        <div class="access-foot">
+          <span>&#128172; D&#250;vidas ou problemas de acesso? Fale com o suporte:</span>
+          <a href="mailto:wallacegoomes879@gmail.com">wallacegoomes879@gmail.com</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Perguntas frequentes</span>
+        <h2>Ainda com d&#250;vida?</h2>
+      </div>
+      <div class="faq">
+        <details open>
+          <summary>Preciso saber mexer em planilha?</summary>
+          <p>N&#227;o. Voc&#234; s&#243; digita nos campos amarelos, respondendo perguntas simples. Todo o c&#225;lculo &#233; feito sozinho, e o v&#237;deo mostra cada passo.</p>
+        </details>
+        <details>
+          <summary>Funciona no celular?</summary>
+          <p>Sim. Basta ter o aplicativo gratuito do Google Sheets. O bot&#227;o de envio abre direto o WhatsApp do seu cliente.</p>
+        </details>
+        <details>
+          <summary>Preciso pagar alguma mensalidade?</summary>
+          <p>N&#227;o. &#201; pagamento &#250;nico. A planilha e o v&#237;deo ficam com voc&#234; para sempre.</p>
+        </details>
+        <details>
+          <summary>Serve para o meu tipo de servi&#231;o?</summary>
+          <p>Sim. Ela funciona para qualquer trabalho cobrado por hora ou por projeto &#8212; de manicure a designer, de pintor a consultor.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot-brand"><span class="brand"><span class="mark"></span></span> Calculadora de Precifica&#231;&#227;o + Propostas no WhatsApp</div>
+      <p class="foot-legal">Este produto &#233; uma ferramenta de apoio &#224; precifica&#231;&#227;o. Os resultados dependem das informa&#231;&#245;es que voc&#234; inserir. N&#227;o constitui aconselhamento cont&#225;bil ou financeiro.</p>
+    </div>
+  </footer>
+
+<script>
+  // Bot&#227;o de tema opcional para quem abrir no navegador (sincroniza com data-theme).
+  // Mantido m&#237;nimo e sem depend&#234;ncias.
+  (function(){
+    try{
+      var saved = localStorage.getItem('tema-precifica');
+      if(saved){ document.documentElement.setAttribute('data-theme', saved); }
+    }catch(e){}
+  })();
+</script>
+</body>
+</html>
